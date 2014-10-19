@@ -1,4 +1,4 @@
-package com.google.android.glass.sample.apidemo;
+package com.google.android.glass.leon.camera;
 
 import java.io.File;
 import java.util.Random;
@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.widget.RemoteViews;
 
+import com.google.android.glass.leon.camera.R;
 import com.google.android.glass.timeline.LiveCard;
 import com.google.android.glass.timeline.LiveCard.PublishMode;
 

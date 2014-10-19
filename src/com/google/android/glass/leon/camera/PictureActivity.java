@@ -1,4 +1,4 @@
-package com.google.android.glass.sample.apidemo;
+package com.google.android.glass.leon.camera;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -52,6 +52,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.glass.content.Intents;
+import com.google.android.glass.leon.camera.R;
 import com.google.android.glass.touchpad.Gesture;
 import com.google.android.glass.touchpad.GestureDetector;
 import com.google.android.glass.view.WindowUtils;

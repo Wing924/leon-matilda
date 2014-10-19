@@ -1,4 +1,4 @@
-package com.google.android.glass.sample.apidemo;
+package com.google.android.glass.leon.camera;
 
 import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.google.android.glass.leon.camera.R;
 import com.google.android.glass.view.WindowUtils;
 
 public class GlassSnapshotActivity extends Activity implements

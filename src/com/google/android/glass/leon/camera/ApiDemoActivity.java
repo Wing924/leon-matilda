@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.android.glass.sample.apidemo;
+package com.google.android.glass.leon.camera;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +31,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 
+import com.google.android.glass.leon.camera.R;
+import com.google.android.glass.leon.camera.card.CardAdapter;
 import com.google.android.glass.media.Sounds;
-import com.google.android.glass.sample.apidemo.card.CardAdapter;
 import com.google.android.glass.view.WindowUtils;
 import com.google.android.glass.widget.CardBuilder;
 import com.google.android.glass.widget.CardScrollAdapter;

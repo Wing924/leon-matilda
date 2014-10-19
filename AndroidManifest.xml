@@ -12,11 +12,11 @@
      distributed under the License is distributed on an "AS IS" BASIS,
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
-     limitations under the License.
+     limitations under the License.
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.google.android.glass.sample.apidemo"
+    package="com.google.android.glass.leon.camera"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -81,7 +81,7 @@
             android:label="@string/app_name" />
 
         <service
-            android:name="com.google.android.glass.sample.apidemo.GlassService"
+            android:name="com.google.android.glass.leon.camera.GlassService"
             android:exported="true"
             android:label="@string/app_name" >
         </service>

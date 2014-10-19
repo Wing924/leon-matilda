@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-package com.google.android.glass.sample.apidemo.card;
+package com.google.android.glass.leon.camera.card;
 
-import com.google.android.glass.media.Sounds;
-import com.google.android.glass.sample.apidemo.R;
-import com.google.android.glass.view.WindowUtils;
-import com.google.android.glass.widget.CardBuilder;
-import com.google.android.glass.widget.CardScrollView;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
@@ -29,8 +26,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.android.glass.leon.camera.R;
+import com.google.android.glass.media.Sounds;
+import com.google.android.glass.widget.CardBuilder;
+import com.google.android.glass.widget.CardScrollView;
 
 /**
  * Creates a card scroll view with examples of different image layout cards.

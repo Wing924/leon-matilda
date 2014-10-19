@@ -1,0 +1,11 @@
+*.*~
+*.swp
+*.apk
+.DS_Store
+bin/
+gen/
+proguard/
+doc/
+local.properties
+secure.properties
+lint.xml

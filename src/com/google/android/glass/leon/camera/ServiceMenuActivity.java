@@ -1,4 +1,4 @@
-package com.google.android.glass.sample.apidemo;
+package com.google.android.glass.leon.camera;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,6 +7,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.google.android.glass.leon.camera.R;
 
 /**
  * Activity showing the options menu.
