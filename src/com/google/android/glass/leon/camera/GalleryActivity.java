@@ -20,13 +20,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,7 +39,6 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.glass.leon.camera.R;
 import com.google.android.glass.media.Sounds;
 import com.google.android.glass.widget.CardBuilder;
 import com.google.android.glass.widget.CardScrollAdapter;
@@ -193,21 +192,26 @@ public class GalleryActivity extends Activity {
 			return mCards.get(position);
 		}
 
-		@SuppressLint("ViewHolder")
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder viewHolder = null;
 			LayoutInflater inflater = (LayoutInflater) myContext
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			File image = listImages[position];
-			Bitmap bitmap = decodeSampledBitmapFromData(image.getAbsolutePath());
+			// Bitmap bitmap =
+			// decodeSampledBitmapFromData(image.getAbsolutePath());
 
 			if (convertView == null) {
+				viewHolder = new ViewHolder();
 				convertView = inflater.inflate(R.layout.image_item, parent,
 						false);
+				viewHolder.imageView = (ImageView) convertView
+						.findViewById(R.id.imageView1);
+				viewHolder.uri = listImages[position].getAbsolutePath();
+				convertView.setTag(viewHolder);
 			}
-			ImageView imageView = (ImageView) convertView
-					.findViewById(R.id.imageView1);
-			imageView.setImageBitmap(bitmap);
+			viewHolder = (ViewHolder) convertView.getTag();
+			new DownloadAsyncTask().execute(viewHolder);
 			return convertView;
 		}
 
@@ -240,6 +244,36 @@ public class GalleryActivity extends Activity {
 		}
 	}
 
+	private static class ViewHolder {
+		ImageView imageView;
+		String uri;
+		Bitmap bitmap;
+	}
+
+	private class DownloadAsyncTask extends
+			AsyncTask<ViewHolder, Void, ViewHolder> {
+
+		@Override
+		protected ViewHolder doInBackground(ViewHolder... params) {
+			// TODO Auto-generated method stub
+			// load image directly
+			ViewHolder viewHolder = params[0];
+			viewHolder.bitmap = decodeSampledBitmapFromData(viewHolder.uri);
+
+			return viewHolder;
+		}
+
+		@Override
+		protected void onPostExecute(ViewHolder result) {
+			// TODO Auto-generated method stub
+			if (result.bitmap == null) {
+				result.imageView.setImageResource(R.drawable.black_bg);
+			} else {
+				result.imageView.setImageBitmap(result.bitmap);
+			}
+		}
+	}
+
 	public static Bitmap decodeSampledBitmapFromData(String path) {
 
 		// First decode with inJustDecodeBounds=true to check dimensions
@@ -249,6 +283,8 @@ public class GalleryActivity extends Activity {
 
 	private void deletePic(String IMAGE_FILE_NAME) {
 		File file = new File(IMAGE_FILE_NAME);
+
+		// TODO : May crash here
 		if (file.delete()) {
 			list = createCards(this);
 			mAdapter.notifyDataSetChanged();

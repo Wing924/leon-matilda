@@ -6,13 +6,15 @@ import java.util.Random;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.net.Uri;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.RemoteViews;
 
-import com.google.android.glass.leon.camera.R;
 import com.google.android.glass.timeline.LiveCard;
 import com.google.android.glass.timeline.LiveCard.PublishMode;
 
@@ -40,6 +42,7 @@ public class GlassService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		Log.i("TAG", "Start Command");
 		if (mLiveCard == null) {
 
 			// Get an instance of a live card
@@ -52,16 +55,36 @@ public class GlassService extends Service {
 		// Set up initial RemoteViews values
 		homeScore = 0;
 		awayScore = 0;
+		Log.i("TAG", "Start Command 2");
 		File gallery = new File(PictureActivity.GALLERY_PATH);
-		File[] listImages1 = gallery.listFiles();
+		final File[] listImages1 = gallery.listFiles();
 		if (listImages1 == null || listImages1.length == 0) {
 
 		} else {
+			Log.i("TAG", "Start Command 3");
 			currentUri = listImages1[listImages1.length - 1].getAbsolutePath();
-			Uri uri = Uri.parse(listImages1[listImages1.length - 1]
-					.getAbsolutePath());
+			new AsyncTask<Void, Void, Bitmap>() {
 
-			mLiveCardView.setImageViewUri(R.id.serviceImage, uri);
+				@Override
+				protected Bitmap doInBackground(Void... params) {
+					Bitmap bitmap = BitmapFactory
+							.decodeFile(listImages1[listImages1.length - 1]
+									.getAbsolutePath());
+					Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap,
+							640, 360, true);
+
+					return scaledBitmap;
+				}
+
+				@Override
+				protected void onPostExecute(Bitmap result) {
+					if (result != null)
+						mLiveCardView.setImageViewBitmap(R.id.serviceImage,
+								result);
+					super.onPostExecute(result);
+				}
+
+			}.execute();
 
 		}
 		// Set up the live card's action with a pending intent
@@ -116,8 +139,8 @@ public class GlassService extends Service {
 				awayScore += mPointsGenerator.nextInt(3);
 
 				// Update the remote view with the new scores.
-				mLiveCardView.setTextViewText(R.id.home_team_name_text_view,
-						String.valueOf(homeScore));
+				// mLiveCardView.setTextViewText(R.id.home_team_name_text_view,
+				// String.valueOf(homeScore));
 				// Always call setViews() to update the live card's RemoteViews.
 				mLiveCard.setViews(mLiveCardView);
 

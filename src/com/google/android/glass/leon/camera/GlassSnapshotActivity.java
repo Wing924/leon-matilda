@@ -201,7 +201,7 @@ public class GlassSnapshotActivity extends Activity implements
 						try {
 							Calendar calendar = Calendar.getInstance();
 							int year = calendar.get(Calendar.YEAR);
-							int month = calendar.get(Calendar.MONTH);
+							int month = calendar.get(Calendar.MONTH) + 1;
 							int day = calendar.get(Calendar.DAY_OF_MONTH);
 							int hour = calendar.get(Calendar.HOUR_OF_DAY);
 							int min = calendar.get(Calendar.MINUTE);
@@ -210,7 +210,6 @@ public class GlassSnapshotActivity extends Activity implements
 									+ String.valueOf(month) + "-"
 									+ String.valueOf(day) + "-"
 									+ String.valueOf(hour) + "-"
-									+ String.valueOf(year) + "-"
 									+ String.valueOf(min) + "-"
 									+ String.valueOf(sec) + ".jpg";
 							FileOutputStream fos = new FileOutputStream(

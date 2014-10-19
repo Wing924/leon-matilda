@@ -86,7 +86,7 @@ public class ApiDemoActivity extends Activity {
 		mCardScroller.setAdapter(mAdapter);
 		setContentView(mCardScroller);
 		setCardScrollerListener();
-		openOptionsMenu();
+		// openOptionsMenu();
 	}
 
 	/**
@@ -134,8 +134,8 @@ public class ApiDemoActivity extends Activity {
 								+ ", row-id " + id);
 						int soundEffect = Sounds.TAP;
 						mVoiceMenuEnabled = !mVoiceMenuEnabled;
-						getWindow().invalidatePanelMenu(
-								WindowUtils.FEATURE_VOICE_COMMANDS);
+						// getWindow().invalidatePanelMenu(
+						// WindowUtils.FEATURE_VOICE_COMMANDS);
 						switch (position) {
 						case CARD_BUILDER:
 							startActivity(new Intent(ApiDemoActivity.this,
