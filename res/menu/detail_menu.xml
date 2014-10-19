@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2013 The Android Open Source Project
+<!--
+     Copyright (C) 2013 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,10 +15,15 @@
      limitations under the License.
 -->
 
-<resources>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <dimen name="card_margin">40px</dimen>
-    <dimen name="table_divider_margin">8px</dimen>
-    <dimen name="table_divider_height">1px</dimen>
+    <item
+        android:id="@+id/share_item"
+        android:icon="@android:drawable/ic_menu_share"
+        android:title="Share"/>
+    <item
+        android:id="@+id/delete_item"
+        android:icon="@drawable/ic_stop"
+        android:title="Delete"/>
 
-</resources>
+</menu>
