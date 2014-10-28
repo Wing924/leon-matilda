@@ -12,7 +12,7 @@
      distributed under the License is distributed on an "AS IS" BASIS,
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
-     limitations under the License.
+     limitations under the License.
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -38,7 +38,7 @@
 
     <application>
         <activity
-            android:name=".ApiDemoActivity"
+            android:name=".PictureActivity"
             android:exported="true"
             android:icon="@drawable/ic_glass_logo"
             android:label="@string/app_name" >
@@ -58,19 +58,6 @@
         <activity
             android:name=".voicemenu.VoiceMenuActivity"
             android:exported="true" />
-        <activity
-            android:name=".PictureActivity"
-            android:exported="true"
-            android:icon="@drawable/ic_glass_logo"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="com.google.android.glass.action.VOICE_TRIGGER" />
-            </intent-filter>
-
-            <meta-data
-                android:name="com.google.android.glass.VoiceTrigger"
-                android:resource="@xml/voice_trigger_start_pic" />
-        </activity>
         <activity
             android:name=".GlassSnapshotActivity"
             android:exported="true"

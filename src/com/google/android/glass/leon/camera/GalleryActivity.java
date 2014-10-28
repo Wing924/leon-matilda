@@ -115,8 +115,10 @@ public class GalleryActivity extends Activity {
 				listImages[j] = listImages1[listImages1.length - 1 - i];
 				j++;
 				final String imageName = image.getAbsolutePath();
-				cards.add(CARD_BUILDER, new CardBuilder(context,
-						CardBuilder.Layout.TEXT).setText(imageName));
+				if (imageName.contains("cut")) {
+					cards.add(CARD_BUILDER, new CardBuilder(context,
+							CardBuilder.Layout.TEXT).setText(imageName));
+				}
 			}
 		}
 		// cards.add(CARD_BUILDER, new CardBuilder(context,

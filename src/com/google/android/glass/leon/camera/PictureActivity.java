@@ -25,6 +25,7 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
@@ -120,6 +121,18 @@ public class PictureActivity extends Activity {
 	// CardScrollView getScroller() {
 	// return mCardScroller;
 	// }
+
+	long startTime;
+	long endTime;
+
+	public void start() {
+		startTime = System.currentTimeMillis();
+	}
+
+	public void end(String string) {
+		endTime = System.currentTimeMillis();
+		Log.i("TAG", "[" + string + "]" + String.valueOf((endTime - startTime)));
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -485,7 +498,9 @@ public class PictureActivity extends Activity {
 									@Override
 									protected Bitmap doInBackground(
 											Void... params) {
+										start();
 										MultipartEntity multipartEntity = getBitmapAndPost();
+										end("Prepare multipart");
 										return multipost(SERVER,
 												multipartEntity);
 									}
@@ -500,7 +515,9 @@ public class PictureActivity extends Activity {
 											Toast.makeText(getBaseContext(),
 													"Processing done",
 													Toast.LENGTH_SHORT).show();
+											start();
 											setPicToView(result);
+											end("Save Pic");
 											startService(new Intent(
 													getBaseContext(),
 													GlassService.class));
@@ -511,19 +528,10 @@ public class PictureActivity extends Activity {
 											myProgressBar
 													.setVisibility(View.GONE);
 											message.setText("Failed to process picture :( !");
-
-											// File bitmapFile = new
-											// File(IMAGE_FILE_NAME);
-											// Bitmap bitmap =
-											// BitmapFactory.decodeFile(bitmapFile
-											// .getAbsolutePath());
-											// setPicToView(bitmap);
 										}
-										// startActivityForResult(
-										// new Intent(
-										// RecognizerIntent.ACTION_RECOGNIZE_SPEECH),
-										// TAKE_ACTION);
-
+										File smallFile = new File(
+												IMAGE_FILE_NAME + "_small.jpg");
+										smallFile.delete();
 									}
 
 								}.execute();
@@ -736,14 +744,35 @@ public class PictureActivity extends Activity {
 	}
 
 	private MultipartEntity getBitmapAndPost() {
+
 		File bitmapFile = new File(IMAGE_FILE_NAME);
 		Log.i("TAG", "---- " + IMAGE_FILE_NAME);
 		Log.i("TAG", "PATH : " + bitmapFile.getAbsolutePath());
-		Bitmap bitmap = BitmapFactory.decodeFile(bitmapFile.getAbsolutePath());
+		Bitmap sendBitmap = BitmapFactory.decodeFile(bitmapFile
+				.getAbsolutePath());
+		sendBitmap = Bitmap.createScaledBitmap(sendBitmap, 800, 600, true);
+
+		FileOutputStream fos;
+		try {
+			fos = new FileOutputStream(IMAGE_FILE_NAME + "_small.jpg");
+			final BufferedOutputStream bos = new BufferedOutputStream(fos, 8192);
+			sendBitmap.compress(CompressFormat.JPEG, 80, bos);
+			bos.flush();
+			bos.close();
+			fos.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Bitmap bitmap = BitmapFactory
+				.decodeFile(IMAGE_FILE_NAME + "_small.jpg");
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+		bitmap.compress(Bitmap.CompressFormat.JPEG, 80, bos);
 		ContentBody contentPart = new ByteArrayBody(bos.toByteArray(),
-				IMAGE_FILE_NAME);
+				IMAGE_FILE_NAME + "_small.jpg");
 		MultipartEntity reqEntity = new MultipartEntity(
 				HttpMultipartMode.BROWSER_COMPATIBLE);
 		reqEntity.addPart("file", contentPart);
@@ -752,6 +781,7 @@ public class PictureActivity extends Activity {
 
 	private Bitmap multipost(String urlString, MultipartEntity reqEntity) {
 		try {
+			start();
 			URL url = new URL(urlString);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setReadTimeout(10000);
@@ -773,10 +803,69 @@ public class PictureActivity extends Activity {
 			conn.connect();
 
 			if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-				return (BitmapFactory.decodeStream(conn.getInputStream()));
+				end("HTTP back : ");
+				Log.i("TAG", "OK result");
+				InputStream responseStream = new BufferedInputStream(
+						conn.getInputStream());
+				BufferedReader responseStreamReader = new BufferedReader(
+						new InputStreamReader(responseStream));
+				String line = "";
+				StringBuilder stringBuilder = new StringBuilder();
+				while ((line = responseStreamReader.readLine()) != null) {
+					stringBuilder.append(line).append("\n");
+				}
+				responseStreamReader.close();
+				String returnString = stringBuilder.toString();
+				Log.i("TAG", "Return String : " + returnString);
+				JSONObject jsonObject = new JSONObject(returnString);
+
+				// double dxRatioString = (double) jsonObject.get("x");
+				// String dyRatioString = (String) jsonObject.get("y");
+				// String widthRatioString = (String) jsonObject.get("width");
+				// String heightRatioString = (String) jsonObject.get("height");
+
+				double dxRatio = jsonObject.getDouble("x");
+				double dyRatio = jsonObject.getDouble("y");
+				double widthRatio = jsonObject.getDouble("width");
+				double heightRatio = jsonObject.getDouble("height");
+
+				Log.i("TAG", "dx : " + String.valueOf(dxRatio));
+				Log.i("TAG", "dy : " + String.valueOf(dyRatio));
+				Log.i("TAG", "width : " + String.valueOf(widthRatio));
+				Log.i("TAG", "height : " + String.valueOf(heightRatio));
+
+				// File bitmapFile = new File(
+				// Environment.getExternalStorageDirectory() + "/"
+				// + fileName);
+
+				Bitmap bitmap = BitmapFactory.decodeFile(IMAGE_FILE_NAME);
+
+				int startX = new Double(dxRatio * bitmap.getWidth()).intValue();
+				int startY = new Double(dyRatio * bitmap.getHeight())
+						.intValue();
+				int width = new Double(widthRatio * bitmap.getWidth())
+						.intValue();
+				int height = new Double(heightRatio * bitmap.getHeight())
+						.intValue();
+
+				Log.i("TAG", "height : " + String.valueOf(bitmap.getWidth()));
+				Log.i("TAG", "width : " + String.valueOf(bitmap.getHeight()));
+
+				Log.i("TAG",
+						"dxRation : "
+								+ String.valueOf(dxRatio * bitmap.getWidth()));
+				Log.i("TAG", "dyRation : " + String.valueOf(startY));
+				Log.i("TAG", "widthRation : " + String.valueOf(width));
+				Log.i("TAG", "heightRation : " + String.valueOf(height));
+
+				return bitmap.createBitmap(bitmap, startX, startY, width,
+						height);
+
+				// return (BitmapFactory.decodeStream(conn.getInputStream()));
 			}
 
 		} catch (Exception e) {
+			end("HTTP back error : ");
 			Log.e("TAG", "multipart post error " + e + "(" + urlString + ")");
 		}
 		return null;
@@ -785,7 +874,7 @@ public class PictureActivity extends Activity {
 	private void setPicToView(Bitmap bitmap) {
 		FileOutputStream fos;
 		try {
-			fos = new FileOutputStream(IMAGE_FILE_NAME);
+			fos = new FileOutputStream(IMAGE_FILE_NAME + "_cut.jpg");
 			final BufferedOutputStream bos = new BufferedOutputStream(fos, 8192);
 			bitmap.compress(CompressFormat.JPEG, 100, bos);
 			bos.flush();
@@ -913,4 +1002,55 @@ public class PictureActivity extends Activity {
 
 	}
 
+	@Override
+	public boolean onCreatePanelMenu(int featureId, Menu menu) {
+		if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
+			getMenuInflater().inflate(R.menu.voice_menu_main, menu);
+			return true;
+		}
+		// Good practice to pass through, for options menu.
+		return super.onCreatePanelMenu(featureId, menu);
+	}
+
+	@Override
+	public boolean onPreparePanel(int featureId, View view, Menu menu) {
+		if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
+			// Dynamically decides between enabling/disabling voice menu.
+			return true;
+		}
+		// Good practice to pass through, for options menu.
+		return super.onPreparePanel(featureId, view, menu);
+	}
+
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
+			switch (item.getItemId()) {
+			case R.id.menu_take_picture:
+				Intent intent = new Intent(this, GlassSnapshotActivity.class);
+				intent.putExtra("imageFileName", IMAGE_FILE_NAME);
+				intent.putExtra("previewWidth", 640);
+				intent.putExtra("previewHeight", 360);
+				intent.putExtra("snapshotWidth", 1280);
+				intent.putExtra("snapshotHeight", 720);
+				intent.putExtra("maximumWaitTimeForCamera", 2000);
+				startActivityForResult(intent, TAKE_PHOTO_CODE);
+
+				return true;
+			case R.id.menu_gallery:
+				startActivity(new Intent(this, GalleryActivity.class));
+				break;
+			case R.id.menu_back_main:
+				finish();
+				break;
+
+			default:
+				return true; // No change.
+
+			}
+			return super.onMenuItemSelected(featureId, item);
+		}
+		return super.onMenuItemSelected(featureId, item);
+
+	}
 }

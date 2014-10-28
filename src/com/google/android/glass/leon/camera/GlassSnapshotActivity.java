@@ -24,7 +24,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
-import com.google.android.glass.leon.camera.R;
 import com.google.android.glass.view.WindowUtils;
 
 public class GlassSnapshotActivity extends Activity implements
@@ -217,7 +216,7 @@ public class GlassSnapshotActivity extends Activity implements
 											+ imageFileName);
 							final BufferedOutputStream bos = new BufferedOutputStream(
 									fos, BUFFER_SIZE);
-							bmp.compress(CompressFormat.JPEG, 100, bos);
+							bmp.compress(CompressFormat.JPEG, 80, bos);
 							bos.flush();
 							bos.close();
 							fos.close();
@@ -226,6 +225,7 @@ public class GlassSnapshotActivity extends Activity implements
 						} catch (IOException e) {
 							Log.v(TAG, e.getMessage());
 						}
+
 						Intent resultIntent = new Intent();
 						// TODO Add extras or a data URI to this intent as
 						// appropriate.
@@ -248,6 +248,15 @@ public class GlassSnapshotActivity extends Activity implements
 				setResult(Activity.RESULT_CANCELED, resultIntent);
 				finish();
 				break;
+			case R.id.menu_gallery:
+				startActivity(new Intent(this, GalleryActivity.class));
+				break;
+			case R.id.menu_back_main:
+				Intent mIntent = new Intent();
+				setResult(Activity.RESULT_CANCELED, mIntent);
+				finish();
+				break;
+
 			default:
 				return true; // No change.
 			}
